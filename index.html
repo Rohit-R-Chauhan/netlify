@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rohit R Chauhan — Founder, InGood</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #050608;
+  --bg2:      #0b0d12;
+  --bg3:      #111420;
+  --surface:  #13161f;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.13);
+  --cyan:     #00e5ff;
+  --cyan2:    #00b8d4;
+  --cyan-dim: rgba(0,229,255,0.08);
+  --cyan-glow:rgba(0,229,255,0.18);
+  --white:    #f0f2f7;
+  --muted:    #6b7280;
+  --muted2:   #9ca3af;
+  --ff-head:  'Syne', sans-serif;
+  --ff-serif: 'Instrument Serif', Georgia, serif;
+  --ff-mono:  'JetBrains Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--ff-head);
+  font-weight: 400;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Custom cursor */
+#cursor {
+  position: fixed; width: 8px; height: 8px;
+  background: var(--cyan); border-radius: 50%;
+  pointer-events: none; z-index: 99999;
+  transform: translate(-50%,-50%);
+  mix-blend-mode: screen;
+}
+#cursor-ring {
+  position: fixed; width: 36px; height: 36px;
+  border: 1px solid rgba(0,229,255,0.4); border-radius: 50%;
+  pointer-events: none; z-index: 99998;
+  transform: translate(-50%,-50%);
+  transition: width 0.35s cubic-bezier(0.22,1,0.36,1),
+              height 0.35s cubic-bezier(0.22,1,0.36,1), border-color 0.25s;
+}
+
+/* Grid background */
+.grid-bg {
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridDrift 24s linear infinite;
+}
+@keyframes gridDrift {
+  0%   { background-position: 0 0; }
+  100% { background-position: 60px 60px; }
+}
+
+/* Radial glow */
+.radial-glow {
+  position: fixed; top: -20vh; left: 50%;
+  transform: translateX(-50%);
+  width: 900px; height: 600px;
+  background: radial-gradient(ellipse, rgba(0,229,255,0.055) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+/* Scanlines */
+.scanlines {
+  position: fixed; inset: 0; z-index: 1;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px
+  );
+  pointer-events: none;
+}
+
+/* Page */
+.page {
+  position: relative; z-index: 2;
+  max-width: 1020px; margin: 0 auto;
+  padding: 0 2.5rem 6rem;
+  overflow-x: hidden;
+}
+
+/* Navbar */
+.navbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.6rem 0; border-bottom: 1px solid var(--border);
+  opacity: 0; animation: fadeDown 0.7s 0.1s ease forwards;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--ff-mono); font-size: 11px;
+  letter-spacing: 0.18em; color: var(--cyan); text-transform: uppercase;
+}
+.nav-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--cyan); box-shadow: 0 0 8px var(--cyan);
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+.nav-status { font-family: var(--ff-mono); font-size: 10px; color: var(--muted); letter-spacing: 0.12em; }
+.nav-status span { color: var(--cyan); }
+
+/* Hero */
+.hero {
+  display: grid; grid-template-columns: minmax(0,1fr) 220px;
+  gap: 2rem; padding: 4rem 0 3.5rem; align-items: start;
+}
+
+.hero-left {
+  opacity: 0; animation: slideUp 1s 0.3s cubic-bezier(0.22,1,0.36,1) forwards;
+  min-width: 0;
+}
+
+.eyebrow {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--ff-mono); font-size: 10px;
+  letter-spacing: 0.25em; color: var(--cyan);
+  text-transform: uppercase; margin-bottom: 1.8rem;
+}
+.eyebrow-line { width: 40px; height: 1px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+
+.hero-name {
+  font-family: var(--ff-head); font-size: clamp(38px, 5.5vw, 66px);
+  font-weight: 800; line-height: 0.95; letter-spacing: -0.03em; margin-bottom: 1.8rem;
+}
+.hero-name .line1 { display: block; color: var(--white); }
+.hero-name .line2 { display: block; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.22); }
+.hero-name .line3 {
+  display: block;
+  background: linear-gradient(90deg, var(--cyan), #7c3aed 80%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+.hero-role {
+  font-family: var(--ff-mono); font-size: 12px; letter-spacing: 0.15em;
+  color: var(--muted2); text-transform: uppercase; margin-bottom: 2.5rem;
+}
+.hero-role strong { color: var(--white); font-weight: 400; }
+
+.hero-quote {
+  position: relative; padding: 1.6rem 2rem;
+  border: 1px solid var(--border2); background: var(--surface);
+  margin-bottom: 2.5rem; overflow: hidden;
+}
+.hero-quote::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: linear-gradient(180deg, var(--cyan), #7c3aed);
+}
+.hero-quote::after {
+  content: '"'; position: absolute; top: -10px; right: 20px;
+  font-family: var(--ff-serif); font-size: 120px;
+  color: rgba(0,229,255,0.05); line-height: 1; pointer-events: none;
+}
+.hero-quote p {
+  font-family: var(--ff-serif); font-size: 19px; font-style: italic;
+  color: var(--white); line-height: 1.5;
+}
+.hero-quote cite {
+  display: block; margin-top: 0.8rem;
+  font-family: var(--ff-mono); font-size: 10px;
+  letter-spacing: 0.14em; color: var(--cyan); font-style: normal;
+}
+
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  font-family: var(--ff-mono); font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 6px 14px; border: 1px solid var(--border2);
+  color: var(--muted2); background: transparent;
+  transition: all 0.22s ease; cursor: none;
+}
+.tag:hover { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); box-shadow: 0 0 12px var(--cyan-glow); }
+
+/* Hero right */
+.hero-right {
+  opacity: 0; animation: slideUp 1s 0.5s cubic-bezier(0.22,1,0.36,1) forwards;
+  position: sticky; top: 2rem;
+}
+
+.photo-card {
+  position: relative; width: 100%; aspect-ratio: 3/4;
+  background: var(--surface); border: 1px solid var(--border2);
+  overflow: hidden; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 14px;
+}
+.photo-card::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    linear-gradient(135deg, rgba(0,229,255,0.04) 0%, transparent 50%),
+    linear-gradient(225deg, rgba(124,58,237,0.04) 0%, transparent 50%);
+}
+.corner {
+  position: absolute; width: 24px; height: 24px;
+  border-color: var(--cyan); border-style: solid; border-width: 0;
+  transition: width 0.4s ease, height 0.4s ease;
+}
+.photo-card:hover .corner { width: 40px; height: 40px; }
+.corner.tl { top:12px; left:12px; border-top-width:1.5px; border-left-width:1.5px; }
+.corner.tr { top:12px; right:12px; border-top-width:1.5px; border-right-width:1.5px; }
+.corner.bl { bottom:12px; left:12px; border-bottom-width:1.5px; border-left-width:1.5px; }
+.corner.br { bottom:12px; right:12px; border-bottom-width:1.5px; border-right-width:1.5px; }
+
+.photo-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--bg3); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 1;
+}
+.photo-icon svg { width: 28px; height: 28px; stroke: var(--cyan); fill: none; stroke-width: 1.5; }
+.photo-hint {
+  font-family: var(--ff-mono); font-size: 9px; letter-spacing: 0.14em;
+  color: var(--muted); text-align: center; text-transform: uppercase; line-height: 1.8;
+  position: relative; z-index: 1;
+}
+
+.photo-scan {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0.4; animation: scan 3s ease-in-out infinite;
+}
+@keyframes scan { 0% { top:0%; } 100% { top:100%; } }
+
+.photo-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 10px 14px; background: rgba(5,6,8,0.85);
+  border-top: 1px solid var(--border);
+  font-family: var(--ff-mono); font-size: 9px;
+  letter-spacing: 0.2em; color: var(--cyan); text-transform: uppercase;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.photo-label .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); animation: blink 1.5s infinite; }
+
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--border2); border-top: none;
+}
+.stat-item {
+  padding: 1.2rem 1rem; text-align: center;
+  border-right: 1px solid var(--border);
+  background: var(--surface); transition: background 0.22s;
+}
+.stat-item:last-child { border-right: none; }
+.stat-item:hover { background: var(--bg3); }
+.stat-val { font-family: var(--ff-head); font-size: 18px; font-weight: 700; color: var(--cyan); line-height: 1; margin-bottom: 4px; }
+.stat-label { font-family: var(--ff-mono); font-size: 9px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
+
+/* Divider */
+.section-divider {
+  display: flex; align-items: center; gap: 1.5rem;
+  margin: 3.5rem 0 2.5rem;
+  opacity: 0; animation: fadeIn 0.7s ease forwards;
+}
+.div-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border2), transparent); }
+.div-label { font-family: var(--ff-mono); font-size: 9px; letter-spacing: 0.25em; color: var(--cyan); text-transform: uppercase; white-space: nowrap; }
+.div-num { font-family: var(--ff-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; }
+
+/* Content grid */
+.content-grid {
+  display: grid; grid-template-columns: 220px 1fr;
+  gap: 3rem; margin-bottom: 2.5rem;
+  opacity: 0; animation: slideUp 0.8s ease forwards;
+}
+.section-num { font-family: var(--ff-mono); font-size: 10px; color: var(--muted); letter-spacing: 0.1em; padding-top: 4px; }
+.section-title { font-family: var(--ff-head); font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cyan); margin-top: 8px; }
+.body-text { font-family: var(--ff-head); font-size: 15px; font-weight: 400; line-height: 1.8; color: rgba(240,242,247,0.72); }
+.body-text + .body-text { margin-top: 1em; }
+.body-text strong { color: var(--white); font-weight: 500; }
+
+/* Pillars */
+.pillars {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border2);
+  opacity: 0; animation: slideUp 0.8s ease forwards;
+}
+.pillar {
+  background: var(--bg); padding: 2rem 1.6rem;
+  position: relative; overflow: hidden; transition: background 0.28s; cursor: none;
+}
+.pillar:hover { background: var(--bg3); }
+.pillar::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.pillar:hover::before { opacity: 1; }
+.pillar-index { font-family: var(--ff-mono); font-size: 9px; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 1rem; }
+.pillar-num {
+  font-family: var(--ff-head); font-size: 44px; font-weight: 800;
+  color: transparent; -webkit-text-stroke: 1px rgba(0,229,255,0.15);
+  line-height: 1; margin-bottom: 1rem; transition: -webkit-text-stroke-color 0.3s;
+}
+.pillar:hover .pillar-num { -webkit-text-stroke-color: rgba(0,229,255,0.4); }
+.pillar-title { font-size: 13px; font-weight: 600; letter-spacing: 0.05em; color: var(--white); margin-bottom: 0.6rem; }
+.pillar-desc { font-family: var(--ff-head); font-size: 12.5px; color: var(--muted); line-height: 1.65; font-weight: 400; }
+
+/* Social */
+.social-section {
+  margin-top: 5rem; padding-top: 3rem;
+  border-top: 1px solid var(--border);
+  opacity: 0; animation: fadeIn 0.8s ease forwards;
+}
+.social-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+.social-title { font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.22em; color: var(--muted); text-transform: uppercase; }
+.social-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border2), transparent); margin-left: 1.5rem; }
+
+.social-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.social-link {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 22px; border: 1px solid var(--border2);
+  background: var(--surface); color: var(--muted2);
+  text-decoration: none; font-family: var(--ff-mono); font-size: 11px;
+  letter-spacing: 0.08em; transition: all 0.28s cubic-bezier(0.22,1,0.36,1);
+  position: relative; overflow: hidden; cursor: none;
+}
+.social-link::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--cyan-dim); opacity: 0; transition: opacity 0.25s;
+}
+.social-link::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  transform: scaleX(0); transition: transform 0.35s ease;
+}
+.social-link:hover::before { opacity: 1; }
+.social-link:hover::after { transform: scaleX(1); }
+.social-link:hover {
+  border-color: rgba(0,229,255,0.35); color: var(--cyan);
+  box-shadow: 0 0 24px rgba(0,229,255,0.08); transform: translateY(-2px);
+}
+.social-link svg { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; position: relative; z-index: 1; transition: transform 0.22s; }
+.social-link:hover svg { transform: scale(1.15); }
+.social-link span { position: relative; z-index: 1; }
+
+/* Footer */
+.page-footer {
+  margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--ff-mono); font-size: 9px; letter-spacing: 0.14em;
+  color: var(--muted); text-transform: uppercase;
+}
+.footer-brand { color: var(--cyan); }
+
+/* Animations */
+@keyframes fadeDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+@keyframes slideUp  { from { opacity:0; transform:translateY(28px);  } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
+
+.s-about   { animation-delay: 0.6s; }
+.s-pillars { animation-delay: 0.7s; }
+.s-content { animation-delay: 0.75s; }
+.d1 { animation-delay: 0.55s; }
+.d2 { animation-delay: 0.65s; }
+.d3 { animation-delay: 0.7s; }
+.social-section { animation-delay: 0.8s; }
+
+/* Responsive */
+@media (max-width: 760px) {
+  .page { padding: 0 1.25rem 4rem; }
+  .hero { grid-template-columns: 1fr; gap: 2.5rem; }
+  .hero-left { padding-right: 0; }
+  .hero-right { position: static; }
+  .photo-card { aspect-ratio: 4/3; }
+  .content-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .pillars { grid-template-columns: 1fr; }
+  .hero-name { font-size: 52px; }
+  .page-footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="radial-glow" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+
+<div class="page">
+
+  <nav class="navbar">
+    <div class="nav-brand">
+      <div class="nav-dot"></div>
+      InGood &nbsp;/&nbsp; Rohit R Chauhan
+    </div>
+    <div class="nav-status">SYSTEM &nbsp;<span>ONLINE</span> &nbsp;·&nbsp; 2024</div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-left">
+      <p class="eyebrow"><span class="eyebrow-line"></span>Founder &amp; Chief Executive</p>
+
+      <h1 class="hero-name">
+        <span class="line1">ROHIT</span>
+        <span class="line2">R.</span>
+        <span class="line3">CHAUHAN</span>
+      </h1>
+
+      <p class="hero-role">Founder · <strong>InGood</strong> &nbsp;·&nbsp; Liquidity-First Investing</p>
+
+      <div class="hero-quote">
+        <p>"Consistency of habit matters more than consistency of amount."</p>
+        <cite>— Rohit R Chauhan &nbsp;/&nbsp; InGood</cite>
+      </div>
+
+      <div class="tags">
+        <span class="tag">Behavioural Finance</span>
+        <span class="tag">Adaptive SIP</span>
+        <span class="tag">FinTech</span>
+        <span class="tag">Wealth Creation</span>
+        <span class="tag">Investing Psychology</span>
+        <span class="tag">Liquidity-First</span>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="photo-card">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+        <div class="photo-scan"></div>
+        <div class="photo-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <p class="photo-hint">Add Rohit's photo here<br>Replace this placeholder</p>
+        <div class="photo-label">
+          <span>RRC · Founder · 2024</span>
+          <div class="dot"></div>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-val">InGood</div>
+          <div class="stat-label">Platform</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">SIP+</div>
+          <div class="stat-label">Core Product</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">₹ AI</div>
+          <div class="stat-label">Adaptive</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider d1">
+    <div class="div-label">About Rohit R Chauhan</div>
+    <div class="div-line"></div>
+    <div class="div-num">01</div>
+  </div>
+
+  <div class="content-grid s-about">
+    <div>
+      <div class="section-num">01 / 03</div>
+      <div class="section-title">Background</div>
+    </div>
+    <div>
+      <p class="body-text">Rohit R Chauhan is the Founder of <strong>InGood</strong>, a liquidity-first investment platform built around the concept of the Self-Adjusting SIP. His work focuses on rethinking how investing systems should function for people living real, financially unpredictable lives.</p>
+      <p class="body-text">Rather than treating investing as a rigid monthly obligation, Rohit believes financial products should adapt to the way people actually earn, spend, save, and manage uncertainty. He observed that many investors do not stop investing because they lack discipline — they stop because <strong>existing financial systems are too rigid for modern financial behaviour</strong>.</p>
+    </div>
+  </div>
+
+  <div class="section-divider d2">
+    <div class="div-label">Philosophy</div>
+    <div class="div-line"></div>
+    <div class="div-num">02</div>
+  </div>
+
+  <div class="pillars s-pillars">
+    <div class="pillar">
+      <div class="pillar-index">— 01</div>
+      <div class="pillar-num">01</div>
+      <div class="pillar-title">Self-Adjusting SIP</div>
+      <p class="pillar-desc">Investment amounts adapt automatically based on available surplus — no pressure, no missed months.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-index">— 02</div>
+      <div class="pillar-num">02</div>
+      <div class="pillar-title">Liquidity First</div>
+      <p class="pillar-desc">Liquidity is not the enemy of wealth. Flexibility and long-term growth coexist in one system.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-index">— 03</div>
+      <div class="pillar-num">03</div>
+      <div class="pillar-title">Habit Over Amount</div>
+      <p class="pillar-desc">Staying invested consistently — even in small ways — builds more wealth than large, intermittent contributions.</p>
+    </div>
+  </div>
+
+  <div class="section-divider d3" style="margin-top:3.5rem;">
+    <div class="div-label">Thought Leadership</div>
+    <div class="div-line"></div>
+    <div class="div-num">03</div>
+  </div>
+
+  <div class="content-grid s-content">
+    <div>
+      <div class="section-num">03 / 03</div>
+      <div class="section-title">Vision</div>
+    </div>
+    <div>
+      <p class="body-text">Rohit regularly shares insights on <strong>behavioural finance</strong>, investing psychology, financial discipline, and the future of adaptive investing. His content challenges traditional assumptions around SIPs, liquidity, and financial consistency while remaining grounded in real-life situations faced by everyday investors.</p>
+      <p class="body-text">By combining practical investing frameworks with deep behavioural understanding, he is building financial products that work <strong>with people's lives rather than against them</strong> — making long-term wealth creation more practical, accessible, and psychologically sustainable for the modern investor.</p>
+    </div>
+  </div>
+
+  <div class="social-section">
+    <div class="social-header">
+      <span class="social-title">Connect with Rohit</span>
+      <div class="social-line"></div>
+    </div>
+    <div class="social-row">
+      <a class="social-link" href="https://in.linkedin.com/in/rohit-r-chauhan-19904852" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        <span>LinkedIn</span>
+      </a>
+      <a class="social-link" href="https://x.com/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        <span>X / Twitter</span>
+      </a>
+      <a class="social-link" href="https://instagram.com/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+        <span>Instagram</span>
+      </a>
+      <a class="social-link" href="https://youtube.com/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        <span>YouTube</span>
+      </a>
+    </div>
+  </div>
+
+  <footer class="page-footer">
+    <span class="footer-brand">InGood · Rohit R Chauhan</span>
+    <span>Adaptive Investing Platform &nbsp;·&nbsp; © 2026-2027</span>
+  </footer>
+
+</div>
+
+<script>
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function raf() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  ring.style.left   = rx + 'px'; ring.style.top   = ry + 'px';
+  requestAnimationFrame(raf);
+})();
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.style.animationPlayState = 'running'; obs.unobserve(e.target); }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.section-divider, .content-grid, .pillars, .social-section').forEach(el => {
+  el.style.animationPlayState = 'paused';
+  obs.observe(el);
+});
+
+/* Expand cursor ring on interactive elements */
+document.querySelectorAll('a, .tag, .pillar, .stat-item').forEach(el => {
+  el.addEventListener('mouseenter', () => { ring.style.width='56px'; ring.style.height='56px'; ring.style.borderColor='var(--cyan)'; });
+  el.addEventListener('mouseleave', () => { ring.style.width='36px'; ring.style.height='36px'; ring.style.borderColor='rgba(0,229,255,0.4)'; });
+});
+</script>
+</body>
+</html>
